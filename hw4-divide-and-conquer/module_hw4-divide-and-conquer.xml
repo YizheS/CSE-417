@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_hw4-divide-and-conquer" default="compile.module.hw4-divide-and-conquer">
+  <dirname property="module.hw4-divide-and-conquer.basedir" file="${ant.file.module_hw4-divide-and-conquer}"/>
+  
+  <property name="module.jdk.home.hw4-divide-and-conquer" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.hw4-divide-and-conquer" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.hw4-divide-and-conquer" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.hw4-divide-and-conquer" value="-encoding UTF-8 -source 9 -target 9 ${compiler.args}"/>
+  
+  <property name="hw4-divide-and-conquer.output.dir" value="${module.hw4-divide-and-conquer.basedir}/bin"/>
+  <property name="hw4-divide-and-conquer.testoutput.dir" value="${module.hw4-divide-and-conquer.basedir}/bin"/>
+  
+  <path id="hw4-divide-and-conquer.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="hw4-divide-and-conquer.module.production.classpath">
+    <path refid="${module.jdk.classpath.hw4-divide-and-conquer}"/>
+  </path>
+  
+  <path id="hw4-divide-and-conquer.runtime.production.module.classpath">
+    <pathelement location="${hw4-divide-and-conquer.output.dir}"/>
+  </path>
+  
+  <path id="hw4-divide-and-conquer.module.classpath">
+    <path refid="${module.jdk.classpath.hw4-divide-and-conquer}"/>
+    <pathelement location="${hw4-divide-and-conquer.output.dir}"/>
+  </path>
+  
+  <path id="hw4-divide-and-conquer.runtime.module.classpath">
+    <pathelement location="${hw4-divide-and-conquer.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.hw4-divide-and-conquer">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.hw4-divide-and-conquer">
+    <patternset refid="excluded.from.module.hw4-divide-and-conquer"/>
+  </patternset>
+  
+  
+  <target name="compile.module.hw4-divide-and-conquer" depends="compile.module.hw4-divide-and-conquer.production,compile.module.hw4-divide-and-conquer.tests" description="Compile module hw4-divide-and-conquer"/>
+  
+  <target name="compile.module.hw4-divide-and-conquer.production" depends="register.custom.compilers" description="Compile module hw4-divide-and-conquer; production classes"/>
+  
+  <target name="compile.module.hw4-divide-and-conquer.tests" depends="register.custom.compilers,compile.module.hw4-divide-and-conquer.production" description="compile module hw4-divide-and-conquer; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.hw4-divide-and-conquer" description="cleanup module">
+    <delete dir="${hw4-divide-and-conquer.output.dir}"/>
+    <delete dir="${hw4-divide-and-conquer.testoutput.dir}"/>
+  </target>
+</project>
