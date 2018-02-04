@@ -115,8 +115,9 @@ public class SidewaysTrend {
         Range runner = Range.fromOneIndex(j, prices);
         begin = begin.concat(runner);
         // If the percentage change is higher and is more than the previous, replace
-        if (begin.percentChangeAtMost(maxPctChange) && longest.length() <= begin.length()) {
-          longest = begin;
+        if (begin.percentChangeAtMost(maxPctChange) &&
+            longest.length() <= begin.length()) {
+           longest = begin;
         }
       }
     }
@@ -133,7 +134,30 @@ public class SidewaysTrend {
 
     // TODO: implement this properly...
 
-    return Range.fromOneIndex(firstIndex, prices);
+    // Base case: with only one element, return the index itself
+    if (firstIndex == lastIndex) {
+      return Range.fromOneIndex(firstIndex, prices);
+    }
+
+    int midpoint = (firstIndex + lastIndex)/2;
+
+    // Splits range in half
+    Range firstHalf = findLongestSidewaysTrend(maxPctChange, prices,
+                        firstIndex, midpoint);
+    Range secondHalf = findLongestSidewaysTrend(maxPctChange, prices,
+                        midpoint + 1, lastIndex);
+    Range combined = findLongestSidewaysTrendCrossingMidpoint(maxPctChange, prices,
+                        firstIndex, midpoint + 1, lastIndex);
+
+    Range longestRange;
+
+    if (firstHalf.length() >= secondHalf.length()) longestRange = firstHalf;
+    else longestRange = secondHalf;
+
+    if (combined != null && combined.length() >= longestRange.length()) {
+      longestRange = combined;
+    }
+    return longestRange;
   }
 
   /**
@@ -146,7 +170,40 @@ public class SidewaysTrend {
       double maxPctChange, List<Integer> prices, int firstIndex, int midIndex,
       int lastIndex) {
 
-    // TODO: implement this properly...
+      // Goes through range 0 to (n/2 - 1)
+      List<Range> lowerHalf = new ArrayList<Range>();
+      Range longestLower = Range.fromOneIndex(midIndex - 1, prices);
+      Range end = Range.fromOneIndex(midIndex - 1, prices); // n/2 - 1
+      for (int i = midIndex - 2; i >= firstIndex; --i) {
+         Range runner = Range.fromOneIndex(i, prices);
+         end = runner.concat(end);
+         if (end.percentChangeAtMost(maxPctChange)) {
+            lowerHalf.add(end);
+            if (end.length() >= longestLower.length()) {
+               longestLower = end;
+            }
+         }
+      }
+
+      // Goes through range n/2 to n
+      Range begin = Range.fromOneIndex(midIndex, prices);
+      List<Range> upperHalf = new ArrayList<Range>();
+      for (int i = midIndex + 1; i <= lastIndex; ++i) {
+         Range runner = Range.fromOneIndex(i, prices);
+         begin = begin.concat(runner);
+         if (begin.percentChangeAtMost(maxPctChange)) {
+            upperHalf.add(begin);
+         }
+      }
+
+      Range longestCombined = null;
+      for (Range upper : upperHalf) {
+         Range crossing = longestLower.concat(upper);
+         if (!crossing.percentChangeAtMost(maxPctChange)) {
+            return longestCombined;
+         }
+         longestCombined = crossing;
+      }
     return null;
   }
 }
